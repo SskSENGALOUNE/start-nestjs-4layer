@@ -1,11 +1,17 @@
 import { Module } from '@nestjs/common';
-import { ExTableModule } from './ex-module/ex-table.module';
 import { ApplicationModule } from '../application/application.module';
 import { CqrsModule } from '@nestjs/cqrs';
-import { TransactionModule } from './transaction/transaction.module';
+import { UserModule } from './user/user.module';
+import { OrderModule } from './order/order.module';
+import { AuthModule } from './auth/auth.module';
+import { RoleModule } from './role/role.module';
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
+import { TagModule } from './tag/tag.module';
+import { ColorModule } from './color/color.module';
 
 @Module({
-  imports: [CqrsModule, ApplicationModule, ExTableModule, TransactionModule],
-  exports: [ExTableModule],
+  imports: [CqrsModule, ApplicationModule, UserModule, OrderModule, AuthModule, RoleModule, CategoryModule, ProductModule, TagModule, ColorModule],
+  exports: [],
 })
-export class PresentationModule {}
+export class PresentationModule { }

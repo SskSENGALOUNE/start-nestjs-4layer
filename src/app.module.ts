@@ -9,6 +9,13 @@ import { ApplicationModule } from './application/application.module';
 import { SharedModule } from './shared/shared.module';
 import { HealthService } from './utilities/health-check/health.service';
 import { DatabaseHealthService } from './utilities/health-check/database-health.service';
+import { CqrsModule } from '@nestjs/cqrs';
+import { CourseController } from './course.controller';
+import { CreateCourseHandler } from './create-course.handler';
+import { ConfigModule } from '@nestjs/config';
+import type { StringValue } from 'ms';
+import { JwtModule } from '@nestjs/jwt';
+import { SizeModule } from './presentation/size/size.module';
 
 function detectDatabaseType(url: string): DatabaseType {
   if (url.startsWith('postgresql://') || url.startsWith('postgres://')) {
@@ -48,8 +55,14 @@ function getTypeOrmImports() {
 }
 
 @Module({
-  imports: [...getTypeOrmImports()],
-  controllers: [AppController],
-  providers: [AppService, HealthService, DatabaseHealthService],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    JwtModule.register({
+      global: true,
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: (process.env.JWT_EXPIRES_IN ?? '7d') as StringValue },
+    }), ...getTypeOrmImports(), PresentationModule, InfrastructureModule, ApplicationModule, SharedModule, CqrsModule, SizeModule],
+  controllers: [AppController, CourseController],
+  providers: [AppService, HealthService, DatabaseHealthService, CreateCourseHandler],
 })
-export class AppModule {}
+export class AppModule { }

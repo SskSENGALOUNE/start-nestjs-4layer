@@ -11,6 +11,7 @@ import { AppModule } from './app.module';
 import { LoggingInterceptor, nestLogger } from './utilities/interceptor/logger';
 import { BaseResponseInterceptor } from './presentation/interceptors/base-response.interceptor';
 import { BaseErrorInterceptor } from './presentation/interceptors/base-error.interceptor';
+import { PrismaExceptionFilter } from './common/filters/prisma-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,7 @@ async function bootstrap() {
     new BaseResponseInterceptor(),
     new BaseErrorInterceptor(),
   );
+  app.useGlobalFilters(new PrismaExceptionFilter());
   // Enable validation globally
   app.useGlobalPipes(
     new ValidationPipe({
@@ -36,13 +38,14 @@ async function bootstrap() {
     .setVersion('1.0')
     .addTag('health')
     .addTag('ex-tables')
+    .addBearerAuth()
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
-  
+
   console.log(`Application is running on: http://localhost:${process.env.PORT ?? 3000}`);
   console.log(`Swagger documentation: http://localhost:${process.env.PORT ?? 3000}/api`);
 }

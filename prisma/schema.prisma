@@ -22,6 +22,45 @@ enum BankType {
   LDB
 }
 
+enum RoleType {
+  ADMIN
+  USER
+  SUPERADMIN
+}
+
+model Role {
+  id        String     @id @default(uuid()) @db.Uuid
+  name      RoleType   @unique
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  users     UserRole[]
+}
+
+model UserRole {
+  userId String @map("user_id") @db.Uuid
+  roleId String @map("role_id") @db.Uuid
+  user   User   @relation(fields: [userId], references: [id])
+  role   Role   @relation(fields: [roleId], references: [id])
+
+  @@id([userId, roleId])
+  @@map("user_roles")
+}
+
+model User {
+  id        String     @id @default(uuid()) @db.Uuid
+  username  String     @unique
+  email     String     @unique
+  password  String
+  createdAt DateTime   @default(now()) @map("created_at")
+  createdBy String     @map("created_by")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  updatedBy String     @map("updated_by")
+  roles     UserRole[]
+  orders    Order[]
+
+  @@map("users")
+}
+
 model ExTable {
   id        String   @id @default(uuid()) @db.Uuid
   name      String
@@ -49,4 +88,121 @@ model Transactions {
   bank_type      BankType
 
   @@map("transactions")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum DeliveryStatus {
+  PENDING
+  SHIPPING
+  DELIVERED
+  CANCELLED
+}
+
+enum DeliveryProvider {
+  LAOS_POST
+  DHL
+  NINJA_VAN
+}
+
+model Order {
+  id               String           @id @default(uuid()) @db.Uuid
+  userId           String           @map("user_id") @db.Uuid
+  status           OrderStatus      @default(PENDING)
+  total            Float            @default(0)
+  createdByName    String           @default("") @map("created_by_name")
+  name             String // ชื่อ (required)
+  phone            String // เบอร์โทรศัพท์ (required)
+  address          String? // ที่อยู่ (optional)
+  deliveryStatus   DeliveryStatus   @default(PENDING) @map("delivery_status")
+  deliveryProvider DeliveryProvider @default(LAOS_POST) @map("delivery_provider")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @updatedAt @map("updated_at")
+  items            OrderItem[]
+  user             User             @relation(fields: [userId], references: [id])
+
+  @@map("orders")
+}
+
+model ProductCategory {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String    @unique
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  products  Product[]
+
+  @@map("product_categories")
+}
+
+model Product {
+  id          String          @id @default(uuid()) @db.Uuid
+  name        String // ชื่อสินค้า
+  costPrice   Float           @map("cost_price") // ราคาซื้อ
+  salePrice   Float           @map("sale_price") // ราคาขาย
+  unit        String // หน่วยนับ
+  minQuantity Int             @default(0) @map("min_quantity") // จำนวนขั้นต่ำ
+  imageUrl    String?         @map("image_url") // รูปภาพ
+  categoryId  String          @map("category_id") @db.Uuid
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  category    ProductCategory @relation(fields: [categoryId], references: [id])
+  inventory   Inventory?
+
+  @@map("products")
+}
+
+model Inventory {
+  id          String   @id @default(uuid()) @db.Uuid
+  productId   String   @unique @map("product_id") @db.Uuid // 1 product มี 1 inventory
+  productName String   @map("product_name")
+  quantity    Int      @default(0) // จำนวนคงเหลือ
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  product     Product  @relation(fields: [productId], references: [id])
+
+  @@map("inventories")
+}
+
+model OrderItem {
+  id       String @id @default(uuid()) @db.Uuid
+  orderId  String @map("order_id") @db.Uuid
+  name     String
+  quantity Int
+  price    Float
+  total    Float  @default(0)
+  order    Order  @relation(fields: [orderId], references: [id])
+
+  @@map("order_items")
+}
+
+model Tag {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("tags")
+}
+
+model Color {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  hexCode   String   @map("hex_code")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("colors")
+}
+
+model Size {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String   @unique
+  sortOrder Int      @map("sort_order")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("sizes")
 }

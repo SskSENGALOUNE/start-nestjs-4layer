@@ -17,6 +17,7 @@ import type { StringValue } from 'ms';
 import { JwtModule } from '@nestjs/jwt';
 import { ArticleModule } from './presentation/article/article.module';
 import { SizeModule } from './presentation/size/size.module';
+import { LeaveRequestModule } from './presentation/leave-request/leave-request.module';
 
 function detectDatabaseType(url: string): DatabaseType {
   if (url.startsWith('postgresql://') || url.startsWith('postgres://')) {
@@ -62,7 +63,7 @@ function getTypeOrmImports() {
       global: true,
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: (process.env.JWT_EXPIRES_IN ?? '7d') as StringValue },
-    }), ...getTypeOrmImports(), PresentationModule, InfrastructureModule, ApplicationModule, SharedModule, CqrsModule, ArticleModule, SizeModule],
+    }), ...getTypeOrmImports(), PresentationModule, InfrastructureModule, ApplicationModule, SharedModule, CqrsModule, ArticleModule, SizeModule, LeaveRequestModule],
   controllers: [AppController, CourseController],
   providers: [AppService, HealthService, DatabaseHealthService, CreateCourseHandler],
 })

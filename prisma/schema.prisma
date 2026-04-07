@@ -223,3 +223,29 @@ model Article {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 }
+
+model Employee {
+  id            String         @id @default(uuid())
+  name          String
+  leaveRequests LeaveRequest[] // 1 พนักงาน มีใบลาได้หลายใบ
+}
+
+model LeaveRequest {
+  id         String      @id @default(uuid())
+  reason     String // เหตุผลการลา
+  startDate  DateTime // วันที่เริ่มลา
+  endDate    DateTime // วันที่สิ้นสุดการลา
+  status     LeaveStatus @default(PENDING) // สถานะใบลา (PENDING, APPROVED, REJECTED)
+  // Relationship
+  employeeId String
+  employee   Employee    @relation(fields: [employeeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}

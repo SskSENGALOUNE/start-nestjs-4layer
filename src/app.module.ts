@@ -15,6 +15,7 @@ import { CreateCourseHandler } from './create-course.handler';
 import { ConfigModule } from '@nestjs/config';
 import type { StringValue } from 'ms';
 import { JwtModule } from '@nestjs/jwt';
+import { ArticleModule } from './presentation/article/article.module';
 import { SizeModule } from './presentation/size/size.module';
 
 function detectDatabaseType(url: string): DatabaseType {
@@ -61,7 +62,7 @@ function getTypeOrmImports() {
       global: true,
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: (process.env.JWT_EXPIRES_IN ?? '7d') as StringValue },
-    }), ...getTypeOrmImports(), PresentationModule, InfrastructureModule, ApplicationModule, SharedModule, CqrsModule, SizeModule],
+    }), ...getTypeOrmImports(), PresentationModule, InfrastructureModule, ApplicationModule, SharedModule, CqrsModule, ArticleModule, SizeModule],
   controllers: [AppController, CourseController],
   providers: [AppService, HealthService, DatabaseHealthService, CreateCourseHandler],
 })

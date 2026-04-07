@@ -249,3 +249,36 @@ enum LeaveStatus {
   APPROVED
   REJECTED
 }
+
+model Account {
+  id          String @id @default(uuid())
+  accountName String
+  balance     Float  @default(0)
+
+  // Relations
+  sentTransfers     TransferTransaction[] @relation("FromAccount")
+  receivedTransfers TransferTransaction[] @relation("ToAccount")
+}
+
+enum TransferTransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model TransferTransaction {
+  id          String                    @id @default(uuid())
+  referenceNo String                    @unique // เลขที่อ้างอิงธุรกรรม (ห้ามซ้ำ)
+  amount      Float
+  fee         Float // ค่าธรรมเนียมที่คำนวณแล้ว
+  status      TransferTransactionStatus @default(PENDING)
+
+  // Relationships
+  fromAccountId String
+  fromAccount   Account @relation("FromAccount", fields: [fromAccountId], references: [id])
+
+  toAccountId String
+  toAccount   Account @relation("ToAccount", fields: [toAccountId], references: [id])
+
+  createdAt DateTime @default(now())
+}

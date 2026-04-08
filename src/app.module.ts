@@ -19,6 +19,7 @@ import { ArticleModule } from './presentation/article/article.module';
 import { SizeModule } from './presentation/size/size.module';
 import { LeaveRequestModule } from './presentation/leave-request/leave-request.module';
 import { TransferModule } from './presentation/transfer/transfer.module';
+import { LoanApplicationModule } from './presentation/loan-application/loan-application.module';
 
 function detectDatabaseType(url: string): DatabaseType {
   if (url.startsWith('postgresql://') || url.startsWith('postgres://')) {
@@ -64,7 +65,7 @@ function getTypeOrmImports() {
       global: true,
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: (process.env.JWT_EXPIRES_IN ?? '7d') as StringValue },
-    }), ...getTypeOrmImports(), PresentationModule, InfrastructureModule, ApplicationModule, SharedModule, CqrsModule, ArticleModule, SizeModule, LeaveRequestModule, TransferModule],
+    }), ...getTypeOrmImports(), PresentationModule, InfrastructureModule, ApplicationModule, SharedModule, CqrsModule, ArticleModule, SizeModule, LeaveRequestModule, TransferModule, LoanApplicationModule],
   controllers: [AppController, CourseController],
   providers: [AppService, HealthService, DatabaseHealthService, CreateCourseHandler],
 })

@@ -282,3 +282,30 @@ model TransferTransaction {
 
   createdAt DateTime @default(now())
 }
+
+model Customer {
+  id               String            @id @default(uuid())
+  citizenId        String            @unique
+  fullName         String
+  loanApplications LoanApplication[]
+}
+
+enum LoanStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model LoanApplication {
+  id              String     @id @default(uuid())
+  referenceNo     String     @unique // เลขที่อ้างอิง เช่น LOAN-20260408-1234
+  customerId      String // FK ไปหา Customer
+  monthlyIncome   Decimal // รายได้ต่อเดือน
+  requestedAmount Decimal // ยอดเงินที่ขอสินเชื่อ
+  purpose         String // วัตถุประสงค์ (เช่น 'ซื้อบ้าน', 'ธุรกิจ')
+  status          LoanStatus @default(PENDING)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id])
+}

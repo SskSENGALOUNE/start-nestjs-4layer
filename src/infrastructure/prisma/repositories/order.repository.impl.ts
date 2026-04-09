@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma.service";
 import type { IOrderRepository, CreateOrderData } from "../../../domain/order/order.repository";
 import { OrderEntity, OrderItemEntity } from "../../../domain/order/order.entity";
+import { DeliveryProvider } from "@prisma/client";
 
 @Injectable()
 export class OrderRepositoryImpl implements IOrderRepository {
@@ -19,8 +20,8 @@ export class OrderRepositoryImpl implements IOrderRepository {
                 name: data.name,
                 phone: data.phone,
                 address: data.address,
-                deliveryProvider: data.deliveryProvider as any,
-                createdByName: user?.username ?? '',
+                deliveryProvider: data.deliveryProvider as DeliveryProvider,
+                createdByName: user?.username,
                 items: {
                     create: data.items.map((item) => ({
                         name: item.name,

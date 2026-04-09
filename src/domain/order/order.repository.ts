@@ -1,3 +1,4 @@
+import { Repository } from "typeorm";
 import { OrderEntity, OrderItemEntity } from "./order.entity";
 
 export interface CreateOrderData {

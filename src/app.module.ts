@@ -70,3 +70,21 @@ function getTypeOrmImports() {
   providers: [AppService, HealthService, DatabaseHealthService, CreateCourseHandler],
 })
 export class AppModule { }
+
+
+// |  1. Presentation Layer                      │
+// │     • {Name}Controller                      │
+// │     • Create{Name}Dto  (request)            │
+// │     • {Name}ResponseDto (response)          │
+// ├─────────────────────────────────────────────┤
+// │  2. Application Layer                       │
+// │     • Create{Name}Command                   │
+// │     • Create{Name}Handler                   │
+// ├─────────────────────────────────────────────┤
+// │  3. Domain Layer                            │
+// │     • {Name}Entity                          │
+// │     • I{Name}Repository  (interface only)   │
+// ├─────────────────────────────────────────────┤
+// │  4. Infrastructure Layer                    │
+// │     • {Name}RepositoryImpl                  │
+// │     • {Name}Module                          |
